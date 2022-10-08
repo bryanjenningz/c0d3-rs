@@ -192,6 +192,13 @@ pub mod rs1 {
         }
         i
     }
+
+    pub fn call_times(f: fn(), mut times: i32) {
+        while times > 0 {
+            f();
+            times -= 1;
+        }
+    }
 }
 
 #[cfg(test)]
@@ -239,5 +246,11 @@ mod test_rs1 {
     fn test_call_while_true() {
         assert_eq!(call_while_true(|x| x < 6), 6);
         assert_eq!(call_while_true(|_| false), 0);
+    }
+
+    #[test]
+    fn test_call_times() {
+        call_times(|| println!("hey"), -5);
+        call_times(|| println!("hi"), 0);
     }
 }
