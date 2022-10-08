@@ -11,7 +11,7 @@ pub mod rs0 {
         x > 5
     }
 
-    pub fn largest<T: Ord>(a: T, b: T) -> T {
+    pub fn largest<T: PartialOrd>(a: T, b: T) -> T {
         if a > b {
             a
         } else {
@@ -19,7 +19,7 @@ pub mod rs0 {
         }
     }
 
-    pub fn largest_3<T: Ord>(a: T, b: T, c: T) -> T {
+    pub fn largest_3<T: PartialOrd>(a: T, b: T, c: T) -> T {
         if a > b && a > c {
             a
         } else if b > c {
@@ -29,7 +29,7 @@ pub mod rs0 {
         }
     }
 
-    pub fn is_first_larger<T: Ord>(first: T, second: T) -> bool {
+    pub fn is_first_larger<T: PartialOrd>(first: T, second: T) -> bool {
         first > second
     }
 
