@@ -185,11 +185,12 @@ pub mod rs1 {
         repeated
     }
 
-    pub fn call_while_true(f: fn(i32) -> bool) {
+    pub fn call_while_true(f: fn(i32) -> bool) -> i32 {
         let mut i = 0;
         while f(i) {
             i += 1;
         }
+        i
     }
 }
 
@@ -236,7 +237,7 @@ mod test_rs1 {
 
     #[test]
     fn test_call_while_true() {
-        call_while_true(|x| x < 6);
-        call_while_true(|_| false);
+        assert_eq!(call_while_true(|x| x < 6), 6);
+        assert_eq!(call_while_true(|_| false), 0);
     }
 }
