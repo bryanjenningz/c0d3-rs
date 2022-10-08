@@ -201,15 +201,7 @@ pub mod rs1 {
     }
 
     pub fn is_prime(x: i32) -> bool {
-        if x < 2 {
-            return false;
-        }
-        for divisor in 2..x {
-            if x % divisor == 0 {
-                return false;
-            }
-        }
-        true
+        x >= 2 && (2..x).all(|divisor| x % divisor != 0)
     }
 }
 
