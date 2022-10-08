@@ -501,6 +501,12 @@ pub mod rs2 {
             result
         })
     }
+
+    pub async fn wait_then_call_functions(functions: &Vec<fn()>, wait_ms: u64) {
+        use tokio::time::{sleep, Duration};
+        sleep(Duration::from_millis(wait_ms)).await;
+        functions.iter().for_each(|f| f());
+    }
 }
 
 #[cfg(test)]
@@ -558,5 +564,10 @@ mod test_rs2 {
         assert_eq!(loop_mapper(), Some(""));
         assert_eq!(loop_mapper(), Some("day"));
         assert_eq!(loop_mapper(), Some("hello"));
+    }
+
+    #[tokio::test]
+    async fn test_wait_then_call_functions() {
+        wait_then_call_functions(&vec![|| println!("hi!"), || println!("hi!!")], 7).await;
     }
 }
