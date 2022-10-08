@@ -184,6 +184,13 @@ pub mod rs1 {
         }
         repeated
     }
+
+    pub fn call_while_true(f: fn(i32) -> bool) {
+        let mut i = 0;
+        while f(i) {
+            i += 1;
+        }
+    }
 }
 
 #[cfg(test)]
@@ -225,5 +232,11 @@ mod test_rs1 {
         assert_eq!(repeat_str("abc", -1), "");
         assert_eq!(repeat_str("abc", 1), "abc");
         assert_eq!(repeat_str("abc", 2), "abcabc");
+    }
+
+    #[test]
+    fn test_call_while_true() {
+        call_while_true(|x| x < 6);
+        call_while_true(|_| false);
     }
 }
