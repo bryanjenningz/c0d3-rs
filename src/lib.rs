@@ -471,6 +471,24 @@ pub mod rs2 {
         }
         iter(f, 0, vec![])
     }
+
+    pub fn make_matrix(rows: i32, cols: i32) -> Vec<Vec<i32>> {
+        fn make_row(cols: i32, mut row: Vec<i32>) -> Vec<i32> {
+            if row.len() as i32 >= cols {
+                return row;
+            }
+            row.push(0);
+            make_row(cols, row)
+        }
+        fn make_rows(rows: i32, cols: i32, mut result: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+            if result.len() as i32 >= rows {
+                return result;
+            }
+            result.push(make_row(cols, vec![]));
+            make_rows(rows, cols, result)
+        }
+        make_rows(rows, cols, vec![])
+    }
 }
 
 #[cfg(test)]
@@ -493,5 +511,17 @@ mod test_rs2 {
         assert_eq!(make_vec_while_true(|x| x < 2), vec![0, 1]);
         assert_eq!(make_vec_while_true(|x| x < 3), vec![0, 1, 2]);
         assert_eq!(make_vec_while_true(|x| x < 4), vec![0, 1, 2, 3]);
+    }
+
+    #[test]
+    fn test_make_matrix() {
+        assert_eq!(make_matrix(5, 2), [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
+        assert_eq!(make_matrix(2, 5), [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]);
+        assert_eq!(make_matrix(-1, -1), vec![] as Vec<Vec<i32>>);
+        assert_eq!(make_matrix(0, 3), vec![] as Vec<Vec<i32>>);
+        assert_eq!(
+            make_matrix(3, 0),
+            vec![vec![], vec![], vec![]] as Vec<Vec<i32>>
+        );
     }
 }
