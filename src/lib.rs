@@ -18,6 +18,16 @@ pub mod rs0 {
             b
         }
     }
+
+    pub fn largest_3<T: Ord>(a: T, b: T, c: T) -> T {
+        if a > b && a > c {
+            a
+        } else if b > c {
+            b
+        } else {
+            c
+        }
+    }
 }
 
 #[cfg(test)]
@@ -67,5 +77,23 @@ mod test_rs0 {
             String::from("z")
         );
         assert_eq!(largest(Some(-1), None), Some(-1));
+    }
+
+    #[test]
+    fn test_largest_3() {
+        assert_eq!(largest_3(0, 0, 0), 0);
+        assert_eq!(largest_3(-1, 0, 1), 1);
+        assert_eq!(largest_3(-1, 0, -1), 0);
+        assert_eq!(largest_3(0, 2, 10), 10);
+        assert_eq!(largest_3(2, -10, -2), 2);
+
+        assert_eq!(largest_3("aaa", "abc", "bcd"), "bcd");
+        assert_eq!(largest_3('a', 'b', 'a'), 'b');
+        assert_eq!(largest_3(false, true, false), true);
+        assert_eq!(
+            largest_3(String::from("x"), String::from("a"), String::from("z")),
+            String::from("z")
+        );
+        assert_eq!(largest_3(Some(-15), Some(-1), None), Some(-1));
     }
 }
