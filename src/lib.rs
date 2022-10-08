@@ -10,6 +10,14 @@ pub mod rs0 {
     pub fn greater_than_5(x: i32) -> bool {
         x > 5
     }
+
+    pub fn largest(a: i32, b: i32) -> i32 {
+        if a > b {
+            a
+        } else {
+            b
+        }
+    }
 }
 
 #[cfg(test)]
@@ -41,5 +49,14 @@ mod test_rs0 {
         assert!(!greater_than_5(5));
         assert!(!greater_than_5(-75));
         assert!(!greater_than_5(0));
+    }
+
+    #[test]
+    fn test_largest() {
+        assert_eq!(largest(0, 0), 0);
+        assert_eq!(largest(0, 1), 1);
+        assert_eq!(largest(0, -1), 0);
+        assert_eq!(largest(2, 10), 10);
+        assert_eq!(largest(-10, 2), 2);
     }
 }
