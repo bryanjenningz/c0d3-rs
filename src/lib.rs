@@ -155,3 +155,30 @@ mod test_rs0 {
         assert_eq!(function_add(|| 100, || -1000), -900);
     }
 }
+
+pub mod rs1 {
+    pub fn make_incrementer(mut count: i32) -> Box<dyn FnMut() -> i32> {
+        Box::new(move || {
+            count += 1;
+            count
+        })
+    }
+}
+
+#[cfg(test)]
+mod test_rs1 {
+    use super::rs1::*;
+
+    #[test]
+    fn test_make_incrementer() {
+        let mut incrementer = make_incrementer(0);
+        assert_eq!(incrementer(), 1);
+        assert_eq!(incrementer(), 2);
+        assert_eq!(incrementer(), 3);
+
+        let mut incrementer = make_incrementer(-5);
+        assert_eq!(incrementer(), -4);
+        assert_eq!(incrementer(), -3);
+        assert_eq!(incrementer(), -2);
+    }
+}
