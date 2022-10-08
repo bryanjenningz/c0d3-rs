@@ -6,6 +6,10 @@ pub mod rs0 {
     pub fn add_3(a: i32, b: i32, c: i32) -> i32 {
         a + b + c
     }
+
+    pub fn greater_than_5(x: i32) -> bool {
+        x > 5
+    }
 }
 
 #[cfg(test)]
@@ -28,5 +32,14 @@ mod test_rs0 {
         assert_eq!(add_3(20, 0, -100), -80);
         assert_eq!(add_3(-20, 0, 20), 0);
         assert_eq!(add_3(-2, 20, 200), 218);
+    }
+
+    #[test]
+    fn test_greater_than_5() {
+        assert!(greater_than_5(6));
+        assert!(greater_than_5(20));
+        assert!(!greater_than_5(5));
+        assert!(!greater_than_5(-75));
+        assert!(!greater_than_5(0));
     }
 }
