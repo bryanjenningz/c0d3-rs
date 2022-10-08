@@ -489,6 +489,18 @@ pub mod rs2 {
         }
         make_rows(rows, cols, vec![])
     }
+
+    pub fn make_map_looper<'a, T, U: 'a>(
+        values: &'a Vec<T>,
+        f: fn(&'a T) -> U,
+    ) -> Box<dyn FnMut() -> Option<U> + 'a> {
+        let mut i = 0;
+        Box::new(move || {
+            let result = values.get(i).map(f);
+            i = (i + 1) % values.len().max(1);
+            result
+        })
+    }
 }
 
 #[cfg(test)]
@@ -523,5 +535,28 @@ mod test_rs2 {
             make_matrix(3, 0),
             vec![vec![], vec![], vec![]] as Vec<Vec<i32>>
         );
+    }
+
+    #[test]
+    fn test_make_loop_mapper() {
+        let empty = vec![];
+        let mut loop_mapper = make_map_looper(&empty, |x| x + 1);
+        assert_eq!(loop_mapper(), None);
+
+        let nums = vec![5, 2, 1, 3];
+        let mut loop_mapper = make_map_looper(&nums, |x| x + 1);
+        assert_eq!(loop_mapper(), Some(6));
+        assert_eq!(loop_mapper(), Some(3));
+        assert_eq!(loop_mapper(), Some(2));
+        assert_eq!(loop_mapper(), Some(4));
+        assert_eq!(loop_mapper(), Some(6));
+
+        let strs = vec!["hello", "what", "a", "day"];
+        let mut loop_mapper = make_map_looper(&strs, |x| if x.len() < 2 { "" } else { x });
+        assert_eq!(loop_mapper(), Some("hello"));
+        assert_eq!(loop_mapper(), Some("what"));
+        assert_eq!(loop_mapper(), Some(""));
+        assert_eq!(loop_mapper(), Some("day"));
+        assert_eq!(loop_mapper(), Some("hello"));
     }
 }
