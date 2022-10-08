@@ -28,6 +28,10 @@ pub mod rs0 {
             c
         }
     }
+
+    pub fn is_first_larger<T: Ord>(first: T, second: T) -> bool {
+        first > second
+    }
 }
 
 #[cfg(test)]
@@ -95,5 +99,15 @@ mod test_rs0 {
             String::from("z")
         );
         assert_eq!(largest_3(Some(-15), Some(-1), None), Some(-1));
+    }
+
+    #[test]
+    fn test_is_first_larger() {
+        assert!(!is_first_larger(1, 2));
+        assert!(is_first_larger(2, 1));
+        assert!(!is_first_larger("abc", "xyz"));
+        assert!(is_first_larger("xyz", "abc"));
+        assert!(!is_first_larger("10", "2"));
+        assert!(is_first_larger("2", "10"));
     }
 }
