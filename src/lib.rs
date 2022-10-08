@@ -164,10 +164,10 @@ pub mod rs1 {
         })
     }
 
-    pub fn call_max_times(
+    pub fn call_max_times<T: ?Sized>(
         mut max_times: i32,
-        f: fn() -> &'static str,
-    ) -> Box<dyn FnMut() -> Option<&'static str>> {
+        f: fn() -> &'static T,
+    ) -> Box<dyn FnMut() -> Option<&'static T>> {
         Box::new(move || {
             if max_times <= 0 {
                 return None;
@@ -201,6 +201,11 @@ mod test_rs1 {
         assert_eq!(caller(), Some("hello"));
         assert_eq!(caller(), Some("hello"));
         assert_eq!(caller(), Some("hello"));
+        assert_eq!(caller(), None);
+
+        let mut caller = call_max_times(2, || &123);
+        assert_eq!(caller(), Some(&123));
+        assert_eq!(caller(), Some(&123));
         assert_eq!(caller(), None);
     }
 }
