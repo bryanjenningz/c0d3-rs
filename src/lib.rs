@@ -32,6 +32,10 @@ pub mod rs0 {
     pub fn is_first_larger<T: Ord>(first: T, second: T) -> bool {
         first > second
     }
+
+    pub fn is_sum_greater_than_10(a: i32, b: i32) -> bool {
+        a + b > 10
+    }
 }
 
 #[cfg(test)]
@@ -109,5 +113,12 @@ mod test_rs0 {
         assert!(is_first_larger("xyz", "abc"));
         assert!(!is_first_larger("10", "2"));
         assert!(is_first_larger("2", "10"));
+    }
+
+    #[test]
+    fn test_is_sum_greater_than_10() {
+        assert!(!is_sum_greater_than_10(10, 0));
+        assert!(is_sum_greater_than_10(10, 1));
+        assert!(!is_sum_greater_than_10(-10, -1));
     }
 }
