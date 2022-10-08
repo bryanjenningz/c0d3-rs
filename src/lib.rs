@@ -246,6 +246,14 @@ pub mod rs1 {
     pub fn count<T: PartialEq>(container: impl Container<T>, item: T) -> usize {
         container.count(item)
     }
+
+    pub fn map_str(s: &str, f: fn(char) -> String) -> String {
+        let mut result = String::new();
+        for ch in s.chars() {
+            result += &f(ch);
+        }
+        result
+    }
 }
 
 #[cfg(test)]
@@ -362,5 +370,28 @@ mod test_rs1 {
         assert_eq!(count(vec![1, 2, 3], 3), 1);
         assert_eq!(count(vec![1, 2, 3], 4), 0);
         assert_eq!(count(vec![1, 2, 1], 1), 2);
+    }
+
+    #[test]
+    fn test_map_str() {
+        assert_eq!(map_str("hello", |_| String::from("9")), "99999");
+        assert_eq!(
+            map_str("hello", |x| {
+                let mut result = String::new();
+                result.push(x);
+                result += "!";
+                result
+            }),
+            "h!e!l!l!o!"
+        );
+        assert_eq!(
+            map_str("hi", |x| {
+                let mut result = String::new();
+                result.push(x);
+                result += "123";
+                result
+            }),
+            "h123i123"
+        );
     }
 }
