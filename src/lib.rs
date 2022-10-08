@@ -204,8 +204,30 @@ pub mod rs1 {
         x >= 2 && (2..x).all(|divisor| x % divisor != 0)
     }
 
-    pub fn contains(s: &str, ch: char) -> bool {
-        s.contains(ch)
+    pub trait Container<T: PartialEq> {
+        fn has(&self, item: T) -> bool;
+    }
+
+    impl Container<char> for &str {
+        fn has(&self, item: char) -> bool {
+            self.contains(item)
+        }
+    }
+
+    impl Container<char> for String {
+        fn has(&self, item: char) -> bool {
+            self.contains(item)
+        }
+    }
+
+    impl<T: PartialEq> Container<T> for Vec<T> {
+        fn has(&self, item: T) -> bool {
+            self.iter().any(|x| *x == item)
+        }
+    }
+
+    pub fn contains<T: PartialEq>(s: impl Container<T>, ch: T) -> bool {
+        s.has(ch)
     }
 }
 
@@ -285,5 +307,20 @@ mod test_rs1 {
         assert_eq!(contains("abc", 'b'), true);
         assert_eq!(contains("abc", 'c'), true);
         assert_eq!(contains("abc", 'd'), false);
+
+        assert_eq!(contains(String::from("abc"), 'a'), true);
+        assert_eq!(contains(String::from("abc"), 'b'), true);
+        assert_eq!(contains(String::from("abc"), 'c'), true);
+        assert_eq!(contains(String::from("abc"), 'd'), false);
+
+        assert_eq!(contains(vec!['a', 'b', 'c'], 'a'), true);
+        assert_eq!(contains(vec!['a', 'b', 'c'], 'b'), true);
+        assert_eq!(contains(vec!['a', 'b', 'c'], 'c'), true);
+        assert_eq!(contains(vec!['a', 'b', 'c'], 'd'), false);
+
+        assert_eq!(contains(vec![1, 2, 3], 1), true);
+        assert_eq!(contains(vec![1, 2, 3], 2), true);
+        assert_eq!(contains(vec![1, 2, 3], 3), true);
+        assert_eq!(contains(vec![1, 2, 3], 4), false);
     }
 }
