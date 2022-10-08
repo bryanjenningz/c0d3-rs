@@ -263,6 +263,12 @@ pub mod rs1 {
             result
         })
     }
+
+    pub async fn wait_then_call(wait_ms: u64, f: fn()) {
+        use tokio::time::{sleep, Duration};
+        sleep(Duration::from_millis(wait_ms)).await;
+        f();
+    }
 }
 
 #[cfg(test)]
@@ -419,5 +425,13 @@ mod test_rs1 {
         assert_eq!(letter_looper(), Some('b'));
         assert_eq!(letter_looper(), Some('c'));
         assert_eq!(letter_looper(), Some('a'));
+    }
+
+    #[tokio::test]
+    async fn test_wait_then_call() {
+        tokio::join!(
+            wait_then_call(2, || println!("hi after 2ms")),
+            wait_then_call(1, || println!("hi after 1ms"))
+        );
     }
 }
