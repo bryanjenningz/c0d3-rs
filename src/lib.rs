@@ -1,14 +1,19 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+pub mod rs0 {
+    pub fn add(a: i32, b: i32) -> i32 {
+        a + b
+    }
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
+mod test_rs0 {
+    use super::rs0::*;
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    fn test_add() {
+        assert_eq!(add(0, 0), 0);
+        assert_eq!(add(0, 1), 1);
+        assert_eq!(add(20, 0), 20);
+        assert_eq!(add(-20, 20), 0);
+        assert_eq!(add(-2, 20), 18);
     }
 }
