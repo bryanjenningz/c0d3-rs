@@ -199,6 +199,18 @@ pub mod rs1 {
             times -= 1;
         }
     }
+
+    pub fn is_prime(x: i32) -> bool {
+        if x < 2 {
+            return false;
+        }
+        for divisor in 2..x {
+            if x % divisor == 0 {
+                return false;
+            }
+        }
+        true
+    }
 }
 
 #[cfg(test)]
@@ -252,5 +264,22 @@ mod test_rs1 {
     fn test_call_times() {
         call_times(|| println!("hey"), -5);
         call_times(|| println!("hi"), 0);
+    }
+
+    #[test]
+    fn test_is_prime() {
+        assert_eq!(is_prime(-5), false);
+        assert_eq!(is_prime(0), false);
+        assert_eq!(is_prime(1), false);
+        assert_eq!(is_prime(2), true);
+        assert_eq!(is_prime(3), true);
+        assert_eq!(is_prime(4), false);
+        assert_eq!(is_prime(5), true);
+        assert_eq!(is_prime(6), false);
+        assert_eq!(is_prime(7), true);
+        assert_eq!(is_prime(8), false);
+        assert_eq!(is_prime(9), false);
+        assert_eq!(is_prime(10), false);
+        assert_eq!(is_prime(11), true);
     }
 }
