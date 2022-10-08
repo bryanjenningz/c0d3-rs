@@ -40,6 +40,10 @@ pub mod rs0 {
     pub fn lazy_add() -> fn(i32, i32) -> i32 {
         |a, b| a + b
     }
+
+    pub fn lazy_add_3(a: i32, b: i32) -> Box<dyn Fn(i32) -> i32> {
+        Box::new(move |c| a + b + c)
+    }
 }
 
 #[cfg(test)]
@@ -131,5 +135,12 @@ mod test_rs0 {
         assert_eq!(lazy_add()(1, 10), 11);
         assert_eq!(lazy_add()(1, -10), -9);
         assert_eq!(lazy_add()(0, -1), -1);
+    }
+
+    #[test]
+    fn test_lazy_add_3() {
+        assert_eq!(lazy_add_3(1, 10)(100), 111);
+        assert_eq!(lazy_add_3(-1, 2)(-10), -9);
+        assert_eq!(lazy_add_3(0, -1)(2), 1);
     }
 }
