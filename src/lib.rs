@@ -460,6 +460,17 @@ pub mod rs2 {
         }
         iter(size, 0, vec![])
     }
+
+    pub fn make_vec_while_true(f: fn(i32) -> bool) -> Vec<i32> {
+        fn iter(f: fn(i32) -> bool, i: i32, mut result: Vec<i32>) -> Vec<i32> {
+            if !f(i) {
+                return result;
+            }
+            result.push(i);
+            iter(f, i + 1, result)
+        }
+        iter(f, 0, vec![])
+    }
 }
 
 #[cfg(test)]
@@ -473,5 +484,14 @@ mod test_rs2 {
         assert_eq!(make_vec(2), vec![0, 1]);
         assert_eq!(make_vec(3), vec![0, 1, 2]);
         assert_eq!(make_vec(4), vec![0, 1, 2, 3]);
+    }
+
+    #[test]
+    fn test_make_vec_while_true() {
+        assert_eq!(make_vec_while_true(|x| x < 0), vec![]);
+        assert_eq!(make_vec_while_true(|x| x < 1), vec![0]);
+        assert_eq!(make_vec_while_true(|x| x < 2), vec![0, 1]);
+        assert_eq!(make_vec_while_true(|x| x < 3), vec![0, 1, 2]);
+        assert_eq!(make_vec_while_true(|x| x < 4), vec![0, 1, 2, 3]);
     }
 }
