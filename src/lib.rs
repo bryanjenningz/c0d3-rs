@@ -203,6 +203,10 @@ pub mod rs1 {
     pub fn is_prime(x: i32) -> bool {
         x >= 2 && (2..x).all(|divisor| x % divisor != 0)
     }
+
+    pub fn contains(s: &str, ch: char) -> bool {
+        s.contains(ch)
+    }
 }
 
 #[cfg(test)]
@@ -273,5 +277,13 @@ mod test_rs1 {
         assert_eq!(is_prime(9), false);
         assert_eq!(is_prime(10), false);
         assert_eq!(is_prime(11), true);
+    }
+
+    #[test]
+    fn test_contains() {
+        assert_eq!(contains("abc", 'a'), true);
+        assert_eq!(contains("abc", 'b'), true);
+        assert_eq!(contains("abc", 'c'), true);
+        assert_eq!(contains("abc", 'd'), false);
     }
 }
