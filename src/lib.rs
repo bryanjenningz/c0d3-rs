@@ -254,6 +254,15 @@ pub mod rs1 {
         }
         result
     }
+
+    pub fn make_letter_looper(s: &str) -> Box<dyn FnMut() -> Option<char> + '_> {
+        let mut i = 0;
+        Box::new(move || {
+            let result = s.chars().nth(i);
+            i = (i + 1) % s.len().max(1);
+            result
+        })
+    }
 }
 
 #[cfg(test)]
@@ -393,5 +402,22 @@ mod test_rs1 {
             }),
             "h123i123"
         );
+    }
+
+    #[test]
+    fn test_make_letter_looper() {
+        let mut letter_looper = make_letter_looper("");
+        assert_eq!(letter_looper(), None);
+        assert_eq!(letter_looper(), None);
+        assert_eq!(letter_looper(), None);
+
+        let mut letter_looper = make_letter_looper("abc");
+        assert_eq!(letter_looper(), Some('a'));
+        assert_eq!(letter_looper(), Some('b'));
+        assert_eq!(letter_looper(), Some('c'));
+        assert_eq!(letter_looper(), Some('a'));
+        assert_eq!(letter_looper(), Some('b'));
+        assert_eq!(letter_looper(), Some('c'));
+        assert_eq!(letter_looper(), Some('a'));
     }
 }
