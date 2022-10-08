@@ -206,11 +206,16 @@ pub mod rs1 {
 
     pub trait Container<T: PartialEq> {
         fn has(&self, item: T) -> bool;
+        fn count(&self, item: T) -> usize;
     }
 
     impl Container<char> for &str {
         fn has(&self, item: char) -> bool {
             self.contains(item)
+        }
+
+        fn count(&self, item: char) -> usize {
+            self.chars().filter(|ch| *ch == item).count()
         }
     }
 
@@ -218,16 +223,28 @@ pub mod rs1 {
         fn has(&self, item: char) -> bool {
             self.contains(item)
         }
+
+        fn count(&self, item: char) -> usize {
+            self.chars().filter(|ch| *ch == item).count()
+        }
     }
 
     impl<T: PartialEq> Container<T> for Vec<T> {
         fn has(&self, item: T) -> bool {
             self.iter().any(|x| *x == item)
         }
+
+        fn count(&self, item: T) -> usize {
+            self.iter().filter(|x| **x == item).count()
+        }
     }
 
     pub fn contains<T: PartialEq>(s: impl Container<T>, ch: T) -> bool {
         s.has(ch)
+    }
+
+    pub fn count<T: PartialEq>(container: impl Container<T>, item: T) -> usize {
+        container.count(item)
     }
 }
 
@@ -322,5 +339,28 @@ mod test_rs1 {
         assert_eq!(contains(vec![1, 2, 3], 2), true);
         assert_eq!(contains(vec![1, 2, 3], 3), true);
         assert_eq!(contains(vec![1, 2, 3], 4), false);
+    }
+
+    #[test]
+    fn test_count() {
+        assert_eq!(count("abc", 'a'), 1);
+        assert_eq!(count("aba", 'a'), 2);
+        assert_eq!(count("aba", 'b'), 1);
+        assert_eq!(count("aba", 'd'), 0);
+
+        assert_eq!(count(String::from("abc"), 'a'), 1);
+        assert_eq!(count(String::from("aba"), 'a'), 2);
+        assert_eq!(count(String::from("aba"), 'b'), 1);
+        assert_eq!(count(String::from("aba"), 'd'), 0);
+
+        assert_eq!(count(vec!['a', 'b', 'a'], 'a'), 2);
+        assert_eq!(count(vec!['a', 'b', 'a'], 'b'), 1);
+        assert_eq!(count(vec!['a', 'b', 'a'], 'd'), 0);
+
+        assert_eq!(count(vec![1, 2, 3], 1), 1);
+        assert_eq!(count(vec![1, 2, 3], 2), 1);
+        assert_eq!(count(vec![1, 2, 3], 3), 1);
+        assert_eq!(count(vec![1, 2, 3], 4), 0);
+        assert_eq!(count(vec![1, 2, 1], 1), 2);
     }
 }
