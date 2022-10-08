@@ -176,6 +176,14 @@ pub mod rs1 {
             Some(f())
         })
     }
+
+    pub fn repeat_str(s: &str, times: i32) -> String {
+        let mut repeated = String::new();
+        for _ in 0..times {
+            repeated.push_str(s);
+        }
+        repeated
+    }
 }
 
 #[cfg(test)]
@@ -207,5 +215,15 @@ mod test_rs1 {
         assert_eq!(caller(), Some(&123));
         assert_eq!(caller(), Some(&123));
         assert_eq!(caller(), None);
+    }
+
+    #[test]
+    fn test_repeat_str() {
+        assert_eq!(repeat_str("a", 5), "aaaaa");
+        assert_eq!(repeat_str("ab", 3), "ababab");
+        assert_eq!(repeat_str("abc", 0), "");
+        assert_eq!(repeat_str("abc", -1), "");
+        assert_eq!(repeat_str("abc", 1), "abc");
+        assert_eq!(repeat_str("abc", 2), "abcabc");
     }
 }
