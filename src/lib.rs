@@ -11,7 +11,7 @@ pub mod rs0 {
         x > 5
     }
 
-    pub fn largest(a: i32, b: i32) -> i32 {
+    pub fn largest<T: Ord>(a: T, b: T) -> T {
         if a > b {
             a
         } else {
@@ -58,5 +58,14 @@ mod test_rs0 {
         assert_eq!(largest(0, -1), 0);
         assert_eq!(largest(2, 10), 10);
         assert_eq!(largest(-10, 2), 2);
+
+        assert_eq!(largest("abc", "bcd"), "bcd");
+        assert_eq!(largest('b', 'a'), 'b');
+        assert_eq!(largest(true, false), true);
+        assert_eq!(
+            largest(String::from("a"), String::from("z")),
+            String::from("z")
+        );
+        assert_eq!(largest(Some(-1), None), Some(-1));
     }
 }
