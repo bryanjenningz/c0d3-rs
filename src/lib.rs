@@ -448,3 +448,30 @@ mod test_rs1 {
         wait_twice_call(3, || println!("hi")).await;
     }
 }
+
+pub mod rs2 {
+    pub fn make_vec(size: i32) -> Vec<i32> {
+        fn iter(size: i32, i: i32, mut result: Vec<i32>) -> Vec<i32> {
+            if i >= size {
+                return result;
+            }
+            result.push(i);
+            iter(size, i + 1, result)
+        }
+        iter(size, 0, vec![])
+    }
+}
+
+#[cfg(test)]
+mod test_rs2 {
+    use crate::rs2::*;
+
+    #[test]
+    fn test_make_vec() {
+        assert_eq!(make_vec(0), vec![]);
+        assert_eq!(make_vec(1), vec![0]);
+        assert_eq!(make_vec(2), vec![0, 1]);
+        assert_eq!(make_vec(3), vec![0, 1, 2]);
+        assert_eq!(make_vec(4), vec![0, 1, 2, 3]);
+    }
+}
