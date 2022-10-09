@@ -807,7 +807,7 @@ pub mod rs3 {
         result
     }
 
-    pub fn duplicates<T: Eq + Hash>(values: Vec<T>) -> HashSet<T> {
+    pub fn duplicates<'a, T: Eq + Hash>(values: &'a Vec<T>) -> HashSet<&'a T> {
         let mut counts = HashMap::new();
         for value in values {
             let count = *counts.get(&value).unwrap_or(&0) + 1;
@@ -905,14 +905,11 @@ mod test_rs3 {
 
     #[test]
     fn test_duplicates() {
+        assert_eq!(duplicates(&vec![1, 2, 1, 3, 1, 3]), [1, 3].iter().collect());
         assert_eq!(
-            duplicates(vec![1, 2, 1, 3, 1, 3]),
-            [1, 3].into_iter().collect()
+            duplicates(&vec![1, 2, 2, 3, 1, 3]),
+            [1, 2, 3].iter().collect()
         );
-        assert_eq!(
-            duplicates(vec![1, 2, 2, 3, 1, 3]),
-            [1, 2, 3].into_iter().collect()
-        );
-        assert_eq!(duplicates(vec![1, 2, 2, 3]), [2].into_iter().collect());
+        assert_eq!(duplicates(&vec![1, 2, 2, 3]), [2].iter().collect());
     }
 }
