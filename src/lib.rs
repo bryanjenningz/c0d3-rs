@@ -596,7 +596,7 @@ mod test_rs2 {
 
     #[test]
     fn test_make_vec() {
-        assert_eq!(make_vec(0), vec![]);
+        assert_eq!(make_vec(0), vec![] as Vec<i32>);
         assert_eq!(make_vec(1), vec![0]);
         assert_eq!(make_vec(2), vec![0, 1]);
         assert_eq!(make_vec(3), vec![0, 1, 2]);
@@ -605,7 +605,7 @@ mod test_rs2 {
 
     #[test]
     fn test_make_vec_while_true() {
-        assert_eq!(make_vec_while_true(|x| x < 0), vec![]);
+        assert_eq!(make_vec_while_true(|x| x < 0), vec![] as Vec<i32>);
         assert_eq!(make_vec_while_true(|x| x < 1), vec![0]);
         assert_eq!(make_vec_while_true(|x| x < 2), vec![0, 1]);
         assert_eq!(make_vec_while_true(|x| x < 3), vec![0, 1, 2]);
