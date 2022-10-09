@@ -792,6 +792,21 @@ pub mod rs3 {
         }
         iter(nums, target, 0, HashSet::new())
     }
+
+    pub fn map_values<K: Hash + Eq + Clone, V: Clone>(
+        map: HashMap<K, V>,
+        value_mappers: HashMap<K, fn(V) -> V>,
+    ) -> HashMap<K, V> {
+        let mut result = HashMap::new();
+        for (key, value) in map.iter() {
+            if let Some(mapper) = value_mappers.get(key) {
+                result.insert(key.clone(), mapper(value.clone()));
+            } else {
+                result.insert(key.clone(), value.clone());
+            }
+        }
+        result
+    }
 }
 
 #[cfg(test)]
@@ -848,5 +863,32 @@ mod test_rs3 {
         assert_eq!(two_sum(&vec![1, 10, 100], 111), false);
         assert_eq!(two_sum(&vec![1, 10, 100], 11), true);
         assert_eq!(two_sum(&vec![1, 10, 100], 101), true);
+    }
+
+    #[test]
+    fn test_map_values() {
+        let mut map = HashMap::new();
+        map.insert("a".to_string(), "1".to_string());
+        map.insert("b".to_string(), "2".to_string());
+        map.insert("c".to_string(), "3".to_string());
+
+        fn emphasize(mut s: String) -> String {
+            s += "!";
+            s
+        }
+        fn really_emphasize(mut s: String) -> String {
+            s += "!!!";
+            s
+        }
+        let mut value_mappers = HashMap::new();
+        value_mappers.insert("a".to_string(), emphasize as fn(String) -> String);
+        value_mappers.insert("c".to_string(), really_emphasize as fn(String) -> String);
+
+        let mut result = HashMap::new();
+        result.insert("a".to_string(), "1!".to_string());
+        result.insert("b".to_string(), "2".to_string());
+        result.insert("c".to_string(), "3!!!".to_string());
+
+        assert_eq!(map_values(map, value_mappers), result);
     }
 }
