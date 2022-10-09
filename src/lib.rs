@@ -542,6 +542,21 @@ pub mod rs2 {
         }
         iter(values, f, 0, vec![])
     }
+
+    pub fn reduce<T, U>(values: &Vec<T>, f: fn(U, &T, usize, &Vec<T>) -> U, init: U) -> U {
+        fn iter<T, U>(
+            values: &Vec<T>,
+            f: fn(U, &T, usize, &Vec<T>) -> U,
+            i: usize,
+            result: U,
+        ) -> U {
+            if i >= values.len() {
+                return result;
+            }
+            iter(values, f, i + 1, f(result, &values[i], i, values))
+        }
+        iter(values, f, 0, init)
+    }
 }
 
 #[cfg(test)]
@@ -628,5 +643,10 @@ mod test_rs2 {
             map(&(0..5).collect(), |x, i, _| x * 2 + i * 10),
             [0, 12, 24, 36, 48]
         );
+    }
+
+    #[test]
+    fn test_reduce() {
+        assert_eq!(reduce(&vec![1, 10, 100], |a, b, _, _| a + b, 0), 111);
     }
 }
