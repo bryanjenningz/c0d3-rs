@@ -703,6 +703,7 @@ mod test_rs2 {
 }
 
 pub mod rs3 {
+    use serde::Deserialize;
     use std::collections::{HashMap, HashSet};
     use std::hash::Hash;
 
@@ -844,6 +845,43 @@ pub mod rs3 {
         }
         result
     }
+
+    #[derive(Debug, Deserialize)]
+    pub struct PokemonResponse {
+        pub results: Vec<PokemonResult>,
+        pub next: Option<String>,
+        pub previous: Option<String>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    pub struct PokemonResult {
+        pub name: String,
+        pub url: String,
+    }
+
+    pub async fn pokemon_request() -> Result<String, reqwest::Error> {
+        let resp = reqwest::get("https://pokeapi.co/api/v2/pokemon/")
+            .await?
+            .json::<PokemonResponse>()
+            .await?;
+
+        let html = resp
+            .results
+            .into_iter()
+            .map(|PokemonResult { url, name }| {
+                let mut html = String::new();
+                html.push_str("<li>");
+                html.push_str(&format!(
+                    "<img style=\"max-width: 200px;\" src=\"{url}\" alt=\"\">"
+                ));
+                html.push_str(&format!("<div>{name}</div>"));
+                html.push_str("</li>");
+                html
+            })
+            .collect();
+        // tokio::fs::write("pokemon.html", html).await;
+        Ok(html)
+    }
 }
 
 #[cfg(test)]
@@ -967,4 +1005,13 @@ mod test_rs3 {
             vec!["a!".to_string(), "b!!".to_string()]
         );
     }
+
+    // Commenting test since it does an HTTP request.
+    // #[tokio::test]
+    // async fn test_pokemon_request() {
+    //     match pokemon_request().await {
+    //         Ok(resp) => assert_eq!(resp, "<li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/1/\" alt=\"\"><div>bulbasaur</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/2/\" alt=\"\"><div>ivysaur</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/3/\" alt=\"\"><div>venusaur</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/4/\" alt=\"\"><div>charmander</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/5/\" alt=\"\"><div>charmeleon</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/6/\" alt=\"\"><div>charizard</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/7/\" alt=\"\"><div>squirtle</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/8/\" alt=\"\"><div>wartortle</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/9/\" alt=\"\"><div>blastoise</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/10/\" alt=\"\"><div>caterpie</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/11/\" alt=\"\"><div>metapod</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/12/\" alt=\"\"><div>butterfree</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/13/\" alt=\"\"><div>weedle</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/14/\" alt=\"\"><div>kakuna</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/15/\" alt=\"\"><div>beedrill</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/16/\" alt=\"\"><div>pidgey</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/17/\" alt=\"\"><div>pidgeotto</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/18/\" alt=\"\"><div>pidgeot</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/19/\" alt=\"\"><div>rattata</div></li><li><img style=\"max-width: 200px;\" src=\"https://pokeapi.co/api/v2/pokemon/20/\" alt=\"\"><div>raticate</div></li>".to_string()),
+    //         Err(error) => panic!("Got an error: {error:?}"),
+    //     }
+    // }
 }
