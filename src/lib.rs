@@ -575,6 +575,19 @@ pub mod rs2 {
         }
         iter(values, f, 0, vec![])
     }
+
+    pub fn find<T>(values: &Vec<T>, f: fn(&T, usize, &Vec<T>) -> bool) -> Option<&T> {
+        fn iter<T>(values: &Vec<T>, f: fn(&T, usize, &Vec<T>) -> bool, i: usize) -> Option<&T> {
+            if i >= values.len() {
+                return None;
+            }
+            if f(&values[i], i, values) {
+                return Some(&values[i]);
+            }
+            iter(values, f, i + 1)
+        }
+        iter(values, f, 0)
+    }
 }
 
 #[cfg(test)]
@@ -675,6 +688,16 @@ mod test_rs2 {
                 && i > 0
                 && i < nums.len() - 1),
             vec![&2]
+        );
+    }
+
+    #[test]
+    fn test_find() {
+        assert_eq!(
+            find(&vec![1, -1, 2, -2, -3, 3], |&x, i, nums| x > 0
+                && i > 0
+                && i < nums.len() - 1),
+            Some(&2)
         );
     }
 }
