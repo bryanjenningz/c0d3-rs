@@ -701,3 +701,45 @@ mod test_rs2 {
         );
     }
 }
+
+pub mod rs3 {
+    use std::collections::HashMap;
+    use std::hash::Hash;
+
+    pub fn pick_key_values<'a, K: Hash + Eq, V>(
+        keys: &'a Vec<K>,
+        map: &'a HashMap<K, V>,
+    ) -> Vec<&'a V> {
+        fn iter<'a, K: Hash + Eq, V>(
+            keys: &'a Vec<K>,
+            map: &'a HashMap<K, V>,
+            i: usize,
+            mut result: Vec<&'a V>,
+        ) -> Vec<&'a V> {
+            if i >= keys.len() {
+                return result;
+            }
+            if let Some(value) = map.get(&keys[i]) {
+                result.push(value);
+            }
+            iter(keys, map, i + 1, result)
+        }
+        iter(keys, map, 0, vec![])
+    }
+}
+
+#[cfg(test)]
+mod test_rs3 {
+    use super::rs3::*;
+    use std::collections::HashMap;
+
+    #[test]
+    fn test_pick_key_values() {
+        let keys = vec!["a", "c"];
+        let mut map = HashMap::new();
+        map.insert("a", 1);
+        map.insert("b", 2);
+        map.insert("c", 3);
+        assert_eq!(pick_key_values(&keys, &map), vec![&1, &3]);
+    }
+}
