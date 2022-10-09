@@ -726,6 +726,35 @@ pub mod rs3 {
         }
         iter(keys, map, 0, vec![])
     }
+
+    #[derive(Debug, PartialEq)]
+    pub struct Coordinate {
+        pub x: i32,
+        pub y: i32,
+    }
+
+    pub fn make_coordinate_matrix(rows: i32, cols: i32) -> Vec<Vec<Coordinate>> {
+        fn make_row(y: i32, cols: i32, x: i32, mut result: Vec<Coordinate>) -> Vec<Coordinate> {
+            if x >= cols {
+                return result;
+            }
+            result.push(Coordinate { x, y });
+            make_row(y, cols, x + 1, result)
+        }
+        fn make_rows(
+            rows: i32,
+            cols: i32,
+            y: i32,
+            mut result: Vec<Vec<Coordinate>>,
+        ) -> Vec<Vec<Coordinate>> {
+            if y >= rows {
+                return result;
+            }
+            result.push(make_row(y, cols, 0, vec![]));
+            make_rows(rows, cols, y + 1, result)
+        }
+        make_rows(rows, cols, 0, vec![])
+    }
 }
 
 #[cfg(test)]
@@ -741,5 +770,17 @@ mod test_rs3 {
         map.insert("b", 2);
         map.insert("c", 3);
         assert_eq!(pick_key_values(&keys, &map), vec![&1, &3]);
+    }
+
+    #[test]
+    fn test_make_coordinate_matrix() {
+        assert_eq!(
+            make_coordinate_matrix(3, 2),
+            [
+                [Coordinate { x: 0, y: 0 }, Coordinate { x: 1, y: 0 }],
+                [Coordinate { x: 0, y: 1 }, Coordinate { x: 1, y: 1 }],
+                [Coordinate { x: 0, y: 2 }, Coordinate { x: 1, y: 2 }]
+            ]
+        );
     }
 }
