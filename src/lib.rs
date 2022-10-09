@@ -515,6 +515,17 @@ pub mod rs2 {
             f();
         }
     }
+
+    pub fn for_each<T>(values: &Vec<T>, f: fn(&T, usize, &Vec<T>)) {
+        fn iter<T>(values: &Vec<T>, f: fn(&T, usize, &Vec<T>), i: usize) {
+            if i >= values.len() {
+                return;
+            }
+            f(&values[i], i, values);
+            iter(values, f, i + 1)
+        }
+        iter(values, f, 0)
+    }
 }
 
 #[cfg(test)]
@@ -582,5 +593,12 @@ mod test_rs2 {
     #[tokio::test]
     async fn test_wait_before_each() {
         wait_before_each(&vec![|| println!("hey!"), || println!("hey!!")], 8).await;
+    }
+
+    #[test]
+    fn test_for_each() {
+        for_each(&vec![5, 8, 7], |x, i, values| {
+            println!("for_each {x} {i} {values:?}");
+        });
     }
 }
