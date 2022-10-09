@@ -818,6 +818,16 @@ pub mod rs3 {
             .filter_map(|(value, count)| if count > 1 { Some(value) } else { None })
             .collect()
     }
+
+    pub fn hashmap_map<K: Eq + Hash, V, V2>(
+        hashmap: HashMap<K, V>,
+        mapper: fn(V) -> V2,
+    ) -> HashMap<K, V2> {
+        hashmap
+            .into_iter()
+            .map(|(key, value)| (key, mapper(value)))
+            .collect()
+    }
 }
 
 #[cfg(test)]
@@ -911,5 +921,19 @@ mod test_rs3 {
             [1, 2, 3].iter().collect()
         );
         assert_eq!(duplicates(&vec![1, 2, 2, 3]), [2].iter().collect());
+    }
+
+    #[test]
+    fn test_hashmap_map() {
+        let mut hashmap = HashMap::new();
+        hashmap.insert("abc", 123);
+        hashmap.insert("xyz", 456);
+        fn mapper(n: i32) -> String {
+            n.to_string() + "!!!"
+        }
+        let mut result = HashMap::new();
+        result.insert("abc", "123!!!".to_string());
+        result.insert("xyz", "456!!!".to_string());
+        assert_eq!(hashmap_map(hashmap, mapper), result);
     }
 }
