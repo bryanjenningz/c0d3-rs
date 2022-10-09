@@ -526,6 +526,22 @@ pub mod rs2 {
         }
         iter(values, f, 0)
     }
+
+    pub fn map<T, U>(values: &Vec<T>, f: fn(&T, usize, &Vec<T>) -> U) -> Vec<U> {
+        fn iter<T, U>(
+            values: &Vec<T>,
+            f: fn(&T, usize, &Vec<T>) -> U,
+            i: usize,
+            mut mapped: Vec<U>,
+        ) -> Vec<U> {
+            if i >= values.len() {
+                return mapped;
+            }
+            mapped.push(f(&values[i], i, values));
+            iter(values, f, i + 1, mapped)
+        }
+        iter(values, f, 0, vec![])
+    }
 }
 
 #[cfg(test)]
@@ -600,5 +616,17 @@ mod test_rs2 {
         for_each(&vec![5, 8, 7], |x, i, values| {
             println!("for_each {x} {i} {values:?}");
         });
+    }
+
+    #[test]
+    fn test_map() {
+        assert_eq!(
+            map(&(0..10).collect(), |x, _, _| x * 2),
+            [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+        );
+        assert_eq!(
+            map(&(0..5).collect(), |x, i, _| x * 2 + i * 10),
+            [0, 12, 24, 36, 48]
+        );
     }
 }
