@@ -828,6 +828,22 @@ pub mod rs3 {
             .map(|(key, value)| (key, mapper(value)))
             .collect()
     }
+
+    pub async fn wait_call_entries<T, U>(entries: Vec<(T, fn(T) -> U)>, wait_ms: u64) -> Vec<U> {
+        use tokio::time::{sleep, Duration};
+        let mut result = vec![];
+        let mut is_first = true;
+        for (value, caller) in entries {
+            if is_first {
+                result.push(caller(value));
+                is_first = false;
+            } else {
+                sleep(Duration::from_millis(wait_ms)).await;
+                result.push(caller(value));
+            }
+        }
+        result
+    }
 }
 
 #[cfg(test)]
@@ -935,5 +951,20 @@ mod test_rs3 {
         result.insert("abc", "123!!!".to_string());
         result.insert("xyz", "456!!!".to_string());
         assert_eq!(hashmap_map(hashmap, mapper), result);
+    }
+
+    #[tokio::test]
+    async fn test_wait_call_entries() {
+        assert_eq!(
+            wait_call_entries(
+                vec![
+                    ("a".to_string(), |x| x + "!"),
+                    ("b".to_string(), |x| x + "!!")
+                ],
+                1
+            )
+            .await,
+            vec!["a!".to_string(), "b!!".to_string()]
+        );
     }
 }
