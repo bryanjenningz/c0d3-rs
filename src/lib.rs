@@ -755,6 +755,28 @@ pub mod rs3 {
         }
         make_rows(rows, cols, 0, vec![])
     }
+
+    pub fn make_map_picker<K: Hash + Eq + Clone + 'static, V: Copy>(
+        keys: Vec<K>,
+    ) -> Box<dyn Fn(HashMap<K, V>) -> HashMap<K, V>> {
+        Box::new(move |map| {
+            fn iter<K: Hash + Eq + Clone, V: Copy>(
+                keys: &Vec<K>,
+                map: &HashMap<K, V>,
+                i: usize,
+                mut result: HashMap<K, V>,
+            ) -> HashMap<K, V> {
+                if i >= keys.len() {
+                    return result;
+                }
+                if let Some(&value) = map.get(&keys[i]) {
+                    result.insert(keys[i].clone(), value);
+                }
+                iter(keys, map, i + 1, result)
+            }
+            iter(&keys, &map, 0, HashMap::new())
+        })
+    }
 }
 
 #[cfg(test)]
@@ -782,5 +804,25 @@ mod test_rs3 {
                 [Coordinate { x: 0, y: 2 }, Coordinate { x: 1, y: 2 }]
             ]
         );
+    }
+
+    #[test]
+    fn test_make_map_picker() {
+        let map_picker = make_map_picker(vec!["a", "c"]);
+        let mut map = HashMap::new();
+        map.insert("a", 1);
+        map.insert("b", 2);
+        map.insert("c", 3);
+        let mut result = HashMap::new();
+        result.insert("a", 1);
+        result.insert("c", 3);
+        assert_eq!(map_picker(map), result);
+
+        let mut map = HashMap::new();
+        map.insert("a", 1);
+        map.insert("b", 2);
+        let mut result = HashMap::new();
+        result.insert("a", 1);
+        assert_eq!(map_picker(map), result);
     }
 }
