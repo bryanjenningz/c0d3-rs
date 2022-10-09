@@ -807,7 +807,7 @@ pub mod rs3 {
         result
     }
 
-    pub fn duplicates<'a, T: Eq + Hash>(values: &'a Vec<T>) -> HashSet<&'a T> {
+    pub fn duplicates<T: Eq + Hash>(values: &Vec<T>) -> HashSet<&T> {
         let mut counts = HashMap::new();
         for value in values {
             let count = *counts.get(&value).unwrap_or(&0) + 1;
