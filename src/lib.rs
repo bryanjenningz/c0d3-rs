@@ -703,7 +703,7 @@ mod test_rs2 {
 }
 
 pub mod rs3 {
-    use std::collections::HashMap;
+    use std::collections::{HashMap, HashSet};
     use std::hash::Hash;
 
     pub fn pick_key_values<'a, K: Hash + Eq, V>(
@@ -779,7 +779,6 @@ pub mod rs3 {
     }
 
     pub fn two_sum(nums: &Vec<i32>, target: i32) -> bool {
-        use std::collections::HashSet;
         fn iter(nums: &Vec<i32>, target: i32, i: usize, mut seen_nums: HashSet<i32>) -> bool {
             if i >= nums.len() {
                 return false;
@@ -806,6 +805,18 @@ pub mod rs3 {
             }
         }
         result
+    }
+
+    pub fn duplicates<T: Eq + Hash>(values: Vec<T>) -> HashSet<T> {
+        let mut counts = HashMap::new();
+        for value in values {
+            let count = *counts.get(&value).unwrap_or(&0) + 1;
+            counts.insert(value, count);
+        }
+        counts
+            .into_iter()
+            .filter_map(|(value, count)| if count > 1 { Some(value) } else { None })
+            .collect()
     }
 }
 
@@ -890,5 +901,18 @@ mod test_rs3 {
         result.insert("c".to_string(), "3!!!".to_string());
 
         assert_eq!(map_values(map, value_mappers), result);
+    }
+
+    #[test]
+    fn test_duplicates() {
+        assert_eq!(
+            duplicates(vec![1, 2, 1, 3, 1, 3]),
+            [1, 3].into_iter().collect()
+        );
+        assert_eq!(
+            duplicates(vec![1, 2, 2, 3, 1, 3]),
+            [1, 2, 3].into_iter().collect()
+        );
+        assert_eq!(duplicates(vec![1, 2, 2, 3]), [2].into_iter().collect());
     }
 }
