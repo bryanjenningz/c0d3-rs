@@ -507,6 +507,14 @@ pub mod rs2 {
         sleep(Duration::from_millis(wait_ms)).await;
         functions.iter().for_each(|f| f());
     }
+
+    pub async fn wait_before_each(functions: &Vec<fn()>, wait_ms: u64) {
+        use tokio::time::{sleep, Duration};
+        for f in functions {
+            sleep(Duration::from_millis(wait_ms)).await;
+            f();
+        }
+    }
 }
 
 #[cfg(test)]
@@ -569,5 +577,10 @@ mod test_rs2 {
     #[tokio::test]
     async fn test_wait_then_call_functions() {
         wait_then_call_functions(&vec![|| println!("hi!"), || println!("hi!!")], 7).await;
+    }
+
+    #[tokio::test]
+    async fn test_wait_before_each() {
+        wait_before_each(&vec![|| println!("hey!"), || println!("hey!!")], 8).await;
     }
 }
