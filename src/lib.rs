@@ -557,6 +557,24 @@ pub mod rs2 {
         }
         iter(values, f, 0, init)
     }
+
+    pub fn filter<T>(values: &Vec<T>, f: fn(&T, usize, &Vec<T>) -> bool) -> Vec<&T> {
+        fn iter<'a, T>(
+            values: &'a Vec<T>,
+            f: fn(&T, usize, &Vec<T>) -> bool,
+            i: usize,
+            mut filtered: Vec<&'a T>,
+        ) -> Vec<&'a T> {
+            if i >= values.len() {
+                return filtered;
+            }
+            if f(&values[i], i, values) {
+                filtered.push(&values[i]);
+            }
+            iter(values, f, i + 1, filtered)
+        }
+        iter(values, f, 0, vec![])
+    }
 }
 
 #[cfg(test)]
@@ -648,5 +666,15 @@ mod test_rs2 {
     #[test]
     fn test_reduce() {
         assert_eq!(reduce(&vec![1, 10, 100], |a, b, _, _| a + b, 0), 111);
+    }
+
+    #[test]
+    fn test_filter() {
+        assert_eq!(
+            filter(&vec![1, -1, 2, -2, -3, 3], |&x, i, nums| x > 0
+                && i > 0
+                && i < nums.len() - 1),
+            vec![&2]
+        );
     }
 }
