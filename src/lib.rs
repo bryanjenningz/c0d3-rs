@@ -777,6 +777,21 @@ pub mod rs3 {
             iter(&keys, &map, 0, HashMap::new())
         })
     }
+
+    pub fn two_sum(nums: &Vec<i32>, target: i32) -> bool {
+        use std::collections::HashSet;
+        fn iter(nums: &Vec<i32>, target: i32, i: usize, mut seen_nums: HashSet<i32>) -> bool {
+            if i >= nums.len() {
+                return false;
+            }
+            if seen_nums.contains(&(target - nums[i])) {
+                return true;
+            }
+            seen_nums.insert(nums[i]);
+            iter(nums, target, i + 1, seen_nums)
+        }
+        iter(nums, target, 0, HashSet::new())
+    }
 }
 
 #[cfg(test)]
@@ -824,5 +839,14 @@ mod test_rs3 {
         let mut result = HashMap::new();
         result.insert("a", 1);
         assert_eq!(map_picker(map), result);
+    }
+
+    #[test]
+    fn test_two_sum() {
+        assert_eq!(two_sum(&vec![1, 10, 100], 110), true);
+        assert_eq!(two_sum(&vec![1, 10, 100], 1), false);
+        assert_eq!(two_sum(&vec![1, 10, 100], 111), false);
+        assert_eq!(two_sum(&vec![1, 10, 100], 11), true);
+        assert_eq!(two_sum(&vec![1, 10, 100], 101), true);
     }
 }
